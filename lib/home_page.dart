@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:appcheck/appcheck.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -159,7 +158,7 @@ class _HomePageState extends State<HomePage> {
     if (Platform.isAndroid) {
       bool isInstalled =
           await DeviceApps.isAppInstalled('us.zoom.videomeetings');
-      if (!isInstalled) {
+      if (isInstalled) {
         if (!await launchUrl(
           Uri.parse(
             url,
@@ -168,6 +167,8 @@ class _HomePageState extends State<HomePage> {
         )) {
           log("There is an issue with the url");
         }
+      } else {
+        redirectStore();
       }
     } else {
       if (!await launchUrl(
@@ -176,7 +177,7 @@ class _HomePageState extends State<HomePage> {
         ),
         mode: LaunchMode.externalApplication,
       )) {
-        redirectStore(); //this will not work
+        redirectStore(); //this will work when the url not launched
       }
     }
   }
