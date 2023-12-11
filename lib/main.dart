@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:zoom_redirect/home_page.dart';
+import 'package:zoom_poc/home_page.dart';
 
 void main() {
   runApp(const MyApp());

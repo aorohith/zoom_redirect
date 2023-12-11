@@ -5,8 +5,8 @@ import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:zoom_redirect/utils/constants.dart';
-import 'package:zoom_redirect/zoom_controller.dart';
+import 'package:zoom_poc/utils/constants.dart';
+import 'package:zoom_poc/zoom_controller.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -154,13 +154,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> onPressed() async {
-    bool zoomInstalled =
-        await DeviceApps.isAppInstalled('us.zoom.videomeetings');
+    bool zoomInstalled = await isZoomAppInstalled();
 
     if (zoomInstalled) {
-      String url =
-          "https://zoom.us/j/95009669252?pwd=ajBOVkxlanZMaUw0NlhMVUhwWXFHQT09";
-      // _urlController.text.trim();
+      String url = _urlController.text.trim();
       if (await canLaunchUrl(Uri.parse(url))) {
         await launchUrl(
           Uri.parse(
@@ -208,6 +205,15 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       log(e.toString(), name: 'store redirect zoom');
     }
+  }
+}
+
+Future<bool> isZoomAppInstalled() async {
+  const String customScheme = 'zoomus://'; // Zoom app's custom URL scheme
+  if (await canLaunchUrl(Uri.parse(customScheme))) {
+    return true; // The Zoom app is installed
+  } else {
+    return false; // The Zoom app is not installed
   }
 }
 

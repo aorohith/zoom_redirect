@@ -1,4 +1,4 @@
-package com.example.zoom_redirect
+package com.bs.zoom.poc
 
 import io.flutter.embedding.android.FlutterActivity
 
