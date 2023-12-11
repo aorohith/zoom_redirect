@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:device_apps/device_apps.dart';
+import 'package:appcheck/appcheck.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -154,23 +154,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> onPressed() async {
-    bool zoomInstalled = await isZoomAppInstalled();
-
-    if (zoomInstalled) {
-      String url = _urlController.text.trim();
-      if (await canLaunchUrl(Uri.parse(url))) {
-        await launchUrl(
-          Uri.parse(
-            convertToZoomAppUrl(
-              url,
-            ),
-          ),
-          mode: LaunchMode.externalApplication,
-        );
-      } else {
-        throw 'Could not launch url';
-      }
-    } else {
+    String url = _urlController.text.trim();
+    // bool zoomInstalled = await isZoomAppInstalled();
+    // if (zoomInstalled) {
+    if (!await launchUrl(
+      Uri.parse(
+        url,
+      ),
+      mode: LaunchMode.externalApplication,
+    )) {
       redirectStore();
     }
   }
@@ -192,7 +184,8 @@ class _HomePageState extends State<HomePage> {
           'https://play.google.com/store/apps/details?id=us.zoom.videomeetings');
       return;
     } else {
-      redirect('https://apps.apple.com/us/app/zoom-cloud-meetings/id546505307');
+      redirect(
+          'https://apps.apple.com/us/app/zoom-one-platform-to-connect/id546505307');
     }
   }
 
@@ -200,22 +193,26 @@ class _HomePageState extends State<HomePage> {
     try {
       if (!await launchUrl(Uri.parse(url),
           mode: LaunchMode.externalApplication)) {
-        log('Could not launch url');
+        print('Could not launch url');
       }
     } catch (e) {
-      log(e.toString(), name: 'store redirect zoom');
+      print(e.toString());
     }
   }
 }
 
-Future<bool> isZoomAppInstalled() async {
-  const String customScheme = 'zoomus://'; // Zoom app's custom URL scheme
-  if (await canLaunchUrl(Uri.parse(customScheme))) {
-    return true; // The Zoom app is installed
-  } else {
-    return false; // The Zoom app is not installed
-  }
-}
+// Future<bool> isZoomAppInstalled() async {
+//   var data = await AppCheck.checkAvailability("zoomus://");
+//   log(data.toString());
+
+//   // const String customScheme = 'zoomus://'; // Zoom app's custom URL scheme
+//   // if (await launchUrl(Uri.parse(customScheme))) {
+//   //   print(Uri.parse(customScheme));
+//   //   return true; // The Zoom app is installed
+//   // } else {
+//   return false; // The Zoom app is not installed
+//   // }
+// }
 
 List<String> _getMeetIdPass(String inputUrl) {
   try {
