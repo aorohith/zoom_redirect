@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:appcheck/appcheck.dart';
+import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -155,15 +156,28 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> onPressed() async {
     String url = _urlController.text.trim();
-    // bool zoomInstalled = await isZoomAppInstalled();
-    // if (zoomInstalled) {
-    if (!await launchUrl(
-      Uri.parse(
-        url,
-      ),
-      mode: LaunchMode.externalApplication,
-    )) {
-      redirectStore();
+    if (Platform.isAndroid) {
+      bool isInstalled =
+          await DeviceApps.isAppInstalled('us.zoom.videomeetings');
+      if (!isInstalled) {
+        if (!await launchUrl(
+          Uri.parse(
+            url,
+          ),
+          mode: LaunchMode.externalApplication,
+        )) {
+          log("There is an issue with the url");
+        }
+      }
+    } else {
+      if (!await launchUrl(
+        Uri.parse(
+          url,
+        ),
+        mode: LaunchMode.externalApplication,
+      )) {
+        redirectStore(); //this will not work
+      }
     }
   }
 
@@ -200,19 +214,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 }
-
-// Future<bool> isZoomAppInstalled() async {
-//   var data = await AppCheck.checkAvailability("zoomus://");
-//   log(data.toString());
-
-//   // const String customScheme = 'zoomus://'; // Zoom app's custom URL scheme
-//   // if (await launchUrl(Uri.parse(customScheme))) {
-//   //   print(Uri.parse(customScheme));
-//   //   return true; // The Zoom app is installed
-//   // } else {
-//   return false; // The Zoom app is not installed
-//   // }
-// }
 
 List<String> _getMeetIdPass(String inputUrl) {
   try {
